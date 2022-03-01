@@ -35,3 +35,16 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ```
 
 ### 解决图片加载抖动
+
+1. 计算图片的宽高比(宽：高)
+2. 为父元素设置一下内容(CSS Hack)
+
+   ```HTML
+    .parent {
+      height: 0;
+      overflow: hidden;
+      padding-bottom: $ratio
+    }
+   ```
+
+3. 原理：提前进行元素占位，避免内容抖动影响页面布局
