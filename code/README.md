@@ -34,6 +34,16 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
   normalize.css --- 解决浏览器css表现差异
 ```
 
+### BEM CSS样式规范
+
+`BEM`: block__element--modifier
+
+```HTML
+  <div class="content">
+    <div class="content__item content__item--active"></div>
+  </div>
+```
+
 ### 解决图片加载抖动
 
 1. 计算图片的宽高比(宽：高)
