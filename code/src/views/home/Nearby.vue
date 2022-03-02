@@ -38,7 +38,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../style/viriables.scss';
-@import '../../style/mixins.scss';
   .nearby {
     &__title {
       margin: .16rem 0 .02rem 0;

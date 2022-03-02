@@ -28,7 +28,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../style/viriables.scss';
-@import '../../style/mixins.scss';
   .docker {
     position: absolute;
     left: 0;
