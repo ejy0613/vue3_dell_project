@@ -58,3 +58,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
    ```
 
 3. 原理：提前进行元素占位，避免内容抖动影响页面布局
+
+### Vue文件中引入内容顺序
+
++ 系统内容引入放置在顶部: `import xx from 'vue' ...`
++ 自定义内容放在下面: `import  xx from '../../components/xx.vue'`
