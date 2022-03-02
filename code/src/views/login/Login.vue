@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+import { post } from '../../utils/request'
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
 export default {
@@ -23,19 +23,20 @@ export default {
       username: '',
       password: ''
     })
-    const handleLogin = () => {
-      axios.post('https://www.fastmock.site/mock/786e34a2cfe42b4b4e85a42e8367f7eb/vue/api/login', {
+    const handleLogin = async () => {
+      const result = await post('/api/login', {
         username: data.username,
         password: data.password
-      }).then(() => {
+      })
+      console.log(result)
+      if (result?.data?.code === 200) {
         localStorage.isLogin = true
         router.push({ name: 'Home' })
-      }).catch(() => {
-        alert('登录失败')
-      })
+      } else {
+        alert('失败')
+      }
     }
     const handleRegister = () => {
-      console.log(router)
       router.push({ name: 'Register' })
     }
     return { handleLogin, handleRegister, data }

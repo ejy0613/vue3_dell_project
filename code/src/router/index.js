@@ -13,7 +13,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "login" */ '../views/login/Login.vue'),
     beforeEnter: (to, from, next) => {
       const { isLogin } = localStorage
-      isLogin ? next('/') : next() // next('/') == next({ name: 'Home' })
+      isLogin ? next({ name: 'Home' }) : next() // next('/') == next({ name: 'Home' })
     }
   },
   {
@@ -22,14 +22,15 @@ const routes = [
     component: () => import('../views/register/Register.vue'),
     beforeEnter: (to, from, next) => {
       const { isLogin } = localStorage
-      isLogin ? next('/') : next() // next('/') == next({ name: 'Home' })
+      isLogin ? next({ name: 'Home' }) : next() // next('/') == next({ name: 'Home' })
     }
   }
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
+  scrollBehavior: () => ({ y: 0 })
 })
 
 // 路由守卫

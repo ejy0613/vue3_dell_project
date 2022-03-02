@@ -1,3 +1,11 @@
+<template>
+  <div class="wrapper">
+    <StaticPart />
+    <Nearby />
+  </div>
+  <Docker />
+</template>
+
 <script>
 import StaticPart from './StaticPart.vue'
 import Nearby from './Nearby.vue'
@@ -7,14 +15,6 @@ export default {
   components: { StaticPart, Nearby, Docker }
 }
 </script>
-
-<template>
-  <div class="wrapper">
-    <StaticPart />
-    <Nearby />
-  </div>
-  <Docker />
-</template>
 
 <style lang="scss" scoped>
 @import '../../style/viriables.scss';
