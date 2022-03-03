@@ -8,6 +8,11 @@ const routes = [
     component: Home
   },
   {
+    path: '/shop/:id',
+    name: 'Shop',
+    component: () => import(/* webpackChunkName: "shop" */ '../views/shop/Shop')
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '../views/login/Login.vue'),
@@ -19,7 +24,7 @@ const routes = [
   {
     path: '/register',
     name: 'Register',
-    component: () => import('../views/register/Register.vue'),
+    component: () => import(/* webpackChunkName: "login" */ '../views/register/Register.vue'),
     beforeEnter: (to, from, next) => {
       const { isLogin } = localStorage
       isLogin ? next({ name: 'Home' }) : next() // next('/') == next({ name: 'Home' })
