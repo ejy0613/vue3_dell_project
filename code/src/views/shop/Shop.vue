@@ -8,6 +8,7 @@
       </div>
     </div>
     <ShopInfo :item="item" :hideBorder="true" />
+    <Content />
   </div>
 </template>
 
@@ -16,6 +17,7 @@ import { reactive, toRefs } from 'vue'
 import { useRoute } from 'vue-router'
 import { get } from '../../utils/request'
 import ShopInfo from '../../components/ShopInfo.vue'
+import Content from './Content.vue'
 
 // 获取当前商铺信息
 const useShopInfoEffect = () => {
@@ -32,7 +34,7 @@ const useShopInfoEffect = () => {
 
 export default {
   name: 'Shop',
-  components: { ShopInfo },
+  components: { ShopInfo, Content },
   setup () {
     const route = useRoute()
 
