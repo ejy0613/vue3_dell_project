@@ -9,6 +9,7 @@
     </div>
     <ShopInfo :item="item" :hideBorder="true" />
     <Content />
+    <Cart />
   </div>
 </template>
 
@@ -18,6 +19,7 @@ import { useRoute } from 'vue-router'
 import { get } from '../../utils/request'
 import ShopInfo from '../../components/ShopInfo.vue'
 import Content from './Content.vue'
+import Cart from './Cart.vue'
 
 // 获取当前商铺信息
 const useShopInfoEffect = () => {
@@ -34,7 +36,7 @@ const useShopInfoEffect = () => {
 
 export default {
   name: 'Shop',
-  components: { ShopInfo, Content },
+  components: { ShopInfo, Content, Cart },
   setup () {
     const route = useRoute()
 

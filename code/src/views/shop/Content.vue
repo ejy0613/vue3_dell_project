@@ -14,7 +14,7 @@
         class="product__item"
         v-for="(item, index) in productList" :key="index"
       >
-        <img src="http://www.dell-lee.com/imgs/vue3/near.png" alt="" class="product__item__img">
+        <img :src="item.imgUrl" alt="" class="product__item__img">
         <div class="product__item__detail">
           <h4 class="product__item__title">{{ item.name }}</h4>
           <p class="product__item_sales">月售{{ item.sales }}件</p>
@@ -24,9 +24,9 @@
           </p>
         </div>
         <div class="product__number">
-          <span class="product__number__minus">-</span>
-          0
-          <span class="product__number__plus">+</span>
+          <span class="product__number__minus" @click="changeCartItemInfo(shopId, item.id, item, -1)">-</span>
+          {{ cartList?.[shopId]?.[item.id]?.count || 0 }}
+          <span class="product__number__plus" @click="changeCartItemInfo(shopId, item.id, item, 1)">+</span>
         </div>
       </div>
     </div>
@@ -36,6 +36,8 @@
 import { reactive, toRefs, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { get } from '../../utils/request'
+import { useCommonCartEffect } from './commonCartEffect'
+
 export default {
   name: 'Content',
   setup () {
@@ -48,11 +50,12 @@ export default {
         { id: 3, tab: 'food', name: '休闲食品' },
         { id: 4, tab: 'vegetable', name: '时令蔬菜' },
         { id: 5, tab: 'meat', name: '肉蛋家禽' }],
-      productList: []
+      productList: [],
+      shopId: route.params.id
     })
 
     async function getCategoryData () {
-      const result = await get(`/api/shop/${route.params.id}/products`, { tab: data.currentCategory })
+      const result = await get(`/api/shop/${data.shopId}/products`, { tab: data.currentCategory })
       if (result?.code === 200 && result?.data?.length) {
         data.productList = result.data
       }
@@ -64,7 +67,8 @@ export default {
 
     watchEffect(() => { getCategoryData() })
 
-    return { ...toRefs(data), handleCategoryClick }
+    const { cartList, changeCartItemInfo } = useCommonCartEffect()
+    return { ...toRefs(data), cartList, handleCategoryClick, changeCartItemInfo }
   }
 }
 </script>
