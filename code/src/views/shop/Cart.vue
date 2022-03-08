@@ -1,17 +1,19 @@
 <template>
+  <div class="mask" v-show="cartVisible" @click.self.prevent="cartVisible = false"></div>
   <div class="cart">
     <!-- 购物车商品 -->
-    <div class="product">
+    <div class="product" v-show="cartVisible">
       <div class="product__header">
-        <div class="product__header__all">
+        <div class="product__header__all" @click="handleCheckedAllClick">
           <span
             class="product__header__icon iconfont"
             v-html="checkedAll ? ' &#xe70f;' : '&#xe6f7;'"
-            @click="handleCheckedAllClick"
           ></span>
           全选
         </div>
-        <div class="product__header__clear" @click="cleanCartProduct($route.params.id)">清空购物车</div>
+        <div class="product__header__clear">
+          <span class="product__header__clear__btn" @click="cleanCartProduct">清空购物车</span>
+        </div>
       </div>
       <template
         v-for="(item, index) in productList" :key="index"
@@ -42,7 +44,7 @@
     </div>
     <!-- 结算 -->
     <div class="check">
-      <div class="check__icon">
+      <div class="check__icon" @click="changeCartVisible">
         <img class="check__icon__img" src="http://www.dell-lee.com/imgs/vue3/basket.png" alt="">
         <div class="check__icon__tag">{{ total }}</div>
       </div>
@@ -59,11 +61,27 @@ import { useStore } from 'vuex'
 import { ref, computed } from 'vue'
 import { useCommonCartEffect } from './commonCartEffect'
 
+// 购物车逻辑
 const useCartEffect = (shopId) => {
-  const { changeCartItemInfo, changeCartItemChecked } = useCommonCartEffect()
-
   const store = useStore()
   const cartList = store.state.cartList
+
+  const productList = computed(() => {
+    const productList = cartList[shopId] || []
+    return productList
+  })
+  const checkedAll = computed(() => {
+    let result = true
+    if (productList.value) {
+      for (const i in productList.value) {
+        const product = productList.value[i]
+        if (!product.check && product.count > 0) {
+          result = false
+        }
+      }
+    }
+    return result
+  })
   const total = computed(() => {
     const { count } = onCartChange()
     return count
@@ -72,18 +90,13 @@ const useCartEffect = (shopId) => {
     const { price } = onCartChange()
     return price
   })
-  const productList = computed(() => {
-    const productList = cartList[shopId] || []
-    return productList
-  })
 
   const onCartChange = () => {
     let count = 0
     let price = 0
-    const productList = cartList[shopId]
-    if (productList) {
-      for (const i in productList) {
-        const product = productList[i]
+    if (productList.value) {
+      for (const i in productList.value) {
+        const product = productList.value[i]
         count += product.count
         if (product.check) {
           price += (product.count * product.price)
@@ -93,11 +106,35 @@ const useCartEffect = (shopId) => {
     return { count, price: price.toFixed(2) }
   }
 
-  const cleanCartProduct = (shopId) => {
+  const cleanCartProduct = () => {
     store.commit('cleanCartProduct', { shopId })
   }
 
-  return { productList, total, totalPrice, changeCartItemInfo, changeCartItemChecked, cleanCartProduct }
+  const handleCheckedAllClick = () => {
+    store.commit('setCartItemsChecked', { shopId })
+  }
+
+  const { changeCartItemInfo, changeCartItemChecked } = useCommonCartEffect()
+
+  return {
+    productList,
+    total,
+    totalPrice,
+    checkedAll,
+    changeCartItemInfo,
+    changeCartItemChecked,
+    cleanCartProduct,
+    handleCheckedAllClick
+  }
+}
+
+// 切换购物车显隐
+const toggleCartEffect = () => {
+  const cartVisible = ref(false)
+  const changeCartVisible = () => {
+    cartVisible.value = !cartVisible.value
+  }
+  return { cartVisible, changeCartVisible }
 }
 
 export default {
@@ -105,16 +142,19 @@ export default {
   setup () {
     const route = useRoute()
     const shopId = route.params.id
-    const { productList, total, totalPrice, changeCartItemInfo, changeCartItemChecked, cleanCartProduct } = useCartEffect(shopId)
 
-    const checkedAll = ref(false)
-    const handleCheckedAllClick = () => {}
+    const { cartVisible, changeCartVisible } = toggleCartEffect()
+
+    const { productList, total, totalPrice, checkedAll, changeCartItemInfo, changeCartItemChecked, cleanCartProduct, handleCheckedAllClick } = useCartEffect(shopId)
+
     return {
+      shopId,
+      cartVisible,
       checkedAll,
       productList,
       total,
       totalPrice,
-      shopId,
+      changeCartVisible,
       changeCartItemInfo,
       changeCartItemChecked,
       cleanCartProduct,
@@ -126,11 +166,20 @@ export default {
 <style lang="scss" scoped>
 @import '../../style/viriables.scss';
 @import '../../style/mixins.scss';
+  .mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: rgba($color: #000000, $alpha: .5);
+  }
   .cart {
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 2;
   }
   .product {
     flex: 1;
@@ -144,16 +193,22 @@ export default {
       color: #333;
       &__all {
         width: .64rem;
-        margin-left: .18rem;
+        margin-left: .16rem;
       }
       &__icon {
+        vertical-align: top;
+        display: inline-block;
+        margin-right: .1rem;
         color: #0091ff;
-        font-size: .16rem;
+        font-size: .2rem;
       }
       &__clear {
         flex: 1;
         margin-right: .16rem;
         text-align: right;
+        &__btn {
+          display: inline-block;
+        }
       }
     }
     &__item {
@@ -234,6 +289,7 @@ export default {
     display: flex;
     height: .5rem;
     line-height: .5rem;
+    background: #fff;
     border-top: .01rem solid #f1f1f1;
     box-sizing: border-box;
     &__icon {
