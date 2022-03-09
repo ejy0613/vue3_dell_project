@@ -1,13 +1,13 @@
 <template>
-  <div class="mask" v-show="cartVisible" @click.self.prevent="cartVisible = false"></div>
+  <div class="mask" v-show="cartVisible && calculations.total > 0" @click.self.prevent="cartVisible = false"></div>
   <div class="cart">
     <!-- 购物车商品 -->
-    <div class="product" v-show="cartVisible">
+    <div class="product" v-show="cartVisible && calculations.total > 0">
       <div class="product__header">
         <div class="product__header__all" @click="handleCheckedAllClick">
           <span
             class="product__header__icon iconfont"
-            v-html="checkedAll ? ' &#xe70f;' : '&#xe6f7;'"
+            v-html="calculations.checkedAll ? ' &#xe70f;' : '&#xe6f7;'"
           ></span>
           全选
         </div>
@@ -46,12 +46,14 @@
     <div class="check">
       <div class="check__icon" @click="changeCartVisible">
         <img class="check__icon__img" src="http://www.dell-lee.com/imgs/vue3/basket.png" alt="">
-        <div class="check__icon__tag">{{ total }}</div>
+        <div class="check__icon__tag">{{ calculations.total }}</div>
       </div>
       <div class="check__info">
-        总计：<span class="check__info__price">&yen;{{ totalPrice }}</span>
+        总计：<span class="check__info__price">&yen;{{ calculations.totalPrice }}</span>
       </div>
-      <div class="check__button">去结算</div>
+      <div class="check__button" >
+        <router-link :to="{ name: 'Home' }">去结算</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -64,47 +66,29 @@ import { useCommonCartEffect } from './commonCartEffect'
 // 购物车逻辑
 const useCartEffect = (shopId) => {
   const store = useStore()
-  const cartList = store.state.cartList
 
   const productList = computed(() => {
-    const productList = cartList[shopId] || []
+    const productList = cartList[shopId]?.productList || {}
     return productList
   })
-  const checkedAll = computed(() => {
-    let result = true
+
+  const calculations = computed(() => {
+    const result = { total: 0, totalPrice: 0, checkedAll: true }
     if (productList.value) {
       for (const i in productList.value) {
         const product = productList.value[i]
+        result.total += product.count
+        if (product.check) {
+          result.totalPrice += (product.count * product.price)
+        }
         if (!product.check && product.count > 0) {
-          result = false
+          result.checkedAll = false
         }
       }
     }
+    result.totalPrice = result.totalPrice.toFixed(2)
     return result
   })
-  const total = computed(() => {
-    const { count } = onCartChange()
-    return count
-  })
-  const totalPrice = computed(() => {
-    const { price } = onCartChange()
-    return price
-  })
-
-  const onCartChange = () => {
-    let count = 0
-    let price = 0
-    if (productList.value) {
-      for (const i in productList.value) {
-        const product = productList.value[i]
-        count += product.count
-        if (product.check) {
-          price += (product.count * product.price)
-        }
-      }
-    }
-    return { count, price: price.toFixed(2) }
-  }
 
   const cleanCartProduct = () => {
     store.commit('cleanCartProduct', { shopId })
@@ -114,13 +98,11 @@ const useCartEffect = (shopId) => {
     store.commit('setCartItemsChecked', { shopId })
   }
 
-  const { changeCartItemInfo, changeCartItemChecked } = useCommonCartEffect()
+  const { cartList, changeCartItemInfo, changeCartItemChecked } = useCommonCartEffect()
 
   return {
     productList,
-    total,
-    totalPrice,
-    checkedAll,
+    calculations,
     changeCartItemInfo,
     changeCartItemChecked,
     cleanCartProduct,
@@ -145,15 +127,16 @@ export default {
 
     const { cartVisible, changeCartVisible } = toggleCartEffect()
 
-    const { productList, total, totalPrice, checkedAll, changeCartItemInfo, changeCartItemChecked, cleanCartProduct, handleCheckedAllClick } = useCartEffect(shopId)
+    const {
+      productList, calculations,
+      changeCartItemInfo, changeCartItemChecked, cleanCartProduct, handleCheckedAllClick
+    } = useCartEffect(shopId)
 
     return {
       shopId,
       cartVisible,
-      checkedAll,
       productList,
-      total,
-      totalPrice,
+      calculations,
       changeCartVisible,
       changeCartItemInfo,
       changeCartItemChecked,
@@ -332,6 +315,10 @@ export default {
       color: #fff;
       text-align: center;
       background: #4FB0F9;
+      a {
+        color: #FFF;
+        text-decoration: none;
+      }
     }
 
   }

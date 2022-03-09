@@ -4,6 +4,10 @@ import Home from '../views/home/Home.vue'
 const routes = [
   {
     path: '/',
+    redirect: '/home'
+  },
+  {
+    path: '/home',
     name: 'Home',
     component: Home
   },
@@ -11,6 +15,11 @@ const routes = [
     path: '/shop/:id',
     name: 'Shop',
     component: () => import(/* webpackChunkName: "shop" */ '../views/shop/Shop')
+  },
+  {
+    path: '/cartList',
+    name: 'CartList',
+    component: () => import(/* webpackChunkName: "cart" */ '../views/cartList/CartList')
   },
   {
     path: '/login',

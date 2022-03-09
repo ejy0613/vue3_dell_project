@@ -2,7 +2,9 @@
   <div class="docker">
     <!-- BEM: block__element--Modifier -->
     <span :class="[`docker__item`, currentDockerItem === index && `docker__item--active`]" v-for="(item, index) in dockerList" :key="index">
-      {{ item.text }}
+      <router-link :to="item.to">
+        {{ item.text }}
+      </router-link>
     </span>
   </div>
 </template>
@@ -13,10 +15,10 @@ export default {
   setup () {
     const currentDockerItem = 0
     const dockerList = [
-      { icon: '', text: '首页' },
-      { icon: '', text: '购物车' },
-      { icon: '', text: '订单' },
-      { icon: '', text: '我的' }
+      { icon: '', text: '首页', to: '/home' },
+      { icon: '', text: '购物车', to: '/cartList' },
+      { icon: '', text: '订单', to: '/home' },
+      { icon: '', text: '我的', to: '/home' }
     ]
     return {
       currentDockerItem,
@@ -38,13 +40,22 @@ export default {
     background: #efefef;
     border-top: .01rem solid $content-bgColor;
     box-sizing: border-box;
+    a {
+      color: #000;
+      text-decoration: none;
+    }
     &__item {
       flex: 1;
       text-align: center;
       line-height: 0.49rem;
+
       &--active {
         color: #409eff;
+        a {
+          color: #409eff;
+        }
       }
+
     }
   }
 </style>

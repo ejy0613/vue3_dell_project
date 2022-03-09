@@ -24,9 +24,9 @@
           </p>
         </div>
         <div class="product__number">
-          <span class="product__number__minus" @click="changeCartItemInfo(shopId, item.id, item, -1)">-</span>
-          {{ cartList?.[shopId]?.[item.id]?.count || 0 }}
-          <span class="product__number__plus" @click="changeCartItemInfo(shopId, item.id, item, 1)">+</span>
+          <span class="product__number__minus" @click="changeCartItem(shopId, item.id, item, -1, shopName)">-</span>
+          {{ getProductCount(shopId, item.id) || 0 }}
+          <span class="product__number__plus" @click="changeCartItem(shopId, item.id, item, 1, shopName)">+</span>
         </div>
       </div>
     </div>
@@ -34,13 +34,21 @@
 </template>
 <script>
 import { reactive, toRefs, watchEffect } from 'vue'
+import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { get } from '../../utils/request'
 import { useCommonCartEffect } from './commonCartEffect'
 
 export default {
   name: 'Content',
+  props: {
+    shopName: {
+      type: String,
+      default: ''
+    }
+  },
   setup () {
+    const store = useStore()
     const route = useRoute()
     const data = reactive({
       currentCategory: 'all',
@@ -54,6 +62,8 @@ export default {
       shopId: route.params.id
     })
 
+    const { cartList, changeCartItemInfo } = useCommonCartEffect()
+
     async function getCategoryData () {
       const result = await get(`/api/shop/${data.shopId}/products`, { tab: data.currentCategory })
       if (result?.code === 200 && result?.data?.length) {
@@ -61,14 +71,26 @@ export default {
       }
     }
 
+    function getProductCount (shopId, productId) {
+      return cartList?.[shopId]?.productList?.[productId]?.count
+    }
+
     function handleCategoryClick (tab) {
       data.currentCategory = tab
     }
 
+    function changeCartShopName (shopId, shopName) {
+      store.commit('changeCartShopName', { shopId, shopName })
+    }
+
+    function changeCartItem (shopId, productId, productInfo, count, shopName) {
+      changeCartItemInfo(shopId, productId, productInfo, count)
+      changeCartShopName(shopId, shopName)
+    }
+
     watchEffect(() => { getCategoryData() })
 
-    const { cartList, changeCartItemInfo } = useCommonCartEffect()
-    return { ...toRefs(data), cartList, handleCategoryClick, changeCartItemInfo }
+    return { ...toRefs(data), cartList, getProductCount, handleCategoryClick, changeCartItem }
   }
 }
 </script>

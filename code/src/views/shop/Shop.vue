@@ -8,7 +8,7 @@
       </div>
     </div>
     <ShopInfo :item="item" :hideBorder="true" />
-    <Content />
+    <Content :shop-name="item.title" />
     <Cart />
   </div>
 </template>
