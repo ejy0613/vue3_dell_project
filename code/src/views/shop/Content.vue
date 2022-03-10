@@ -37,7 +37,7 @@ import { reactive, toRefs, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { get } from '../../utils/request'
-import { useCommonCartEffect } from './commonCartEffect'
+import { useCommonCartEffect } from '../../effects/cartEffects'
 
 export default {
   name: 'Content',
