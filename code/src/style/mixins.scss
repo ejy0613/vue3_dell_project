@@ -3,3 +3,15 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+@mixin wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: .5rem;
+  width: 100%;
+  padding: 0 .18rem .15rem .18rem;
+  box-sizing: border-box;
+  color: $content-fontcolor;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

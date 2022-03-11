@@ -55,7 +55,7 @@ export default {
       if (result && result.code === 200) {
         store.commit('clearCartData', shopId)
         confirmPopupVisible.value = false
-        router.push('/home')
+        router.push('/orderList')
       }
     }
     return { confirmPopupVisible, calculations, handleOrderConfirm }

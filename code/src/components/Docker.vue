@@ -12,16 +12,15 @@
 <script>
 export default {
   name: 'Docker',
+  props: ['currentDockerItem'],
   setup () {
-    const currentDockerItem = 0
     const dockerList = [
       { icon: '', text: '首页', to: '/home' },
       { icon: '', text: '购物车', to: '/cartList' },
-      { icon: '', text: '订单', to: '/order/:id' },
+      { icon: '', text: '订单', to: '/orderList' },
       { icon: '', text: '我的', to: '/home' }
     ]
     return {
-      currentDockerItem,
       dockerList
     }
   }
@@ -29,7 +28,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../style/viriables.scss';
+@import '../style/viriables.scss';
   .docker {
     position: absolute;
     left: 0;
