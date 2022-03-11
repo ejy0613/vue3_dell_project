@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <TopArea />
-    <ProductList :product-list="productList" :shop-name="shopName" />
+    <ProductList />
     <BottomArea />
   </div>
 
@@ -27,5 +27,4 @@ export default {
   background: #eee;
   overflow: hidden;
 }
-
 </style>
